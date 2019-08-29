@@ -1,3 +1,23 @@
 <resources>
     <string name="app_name">千牛代收</string>
+
+    <string name="login_account">账号</string>
+    <string name="login_account_hint">请输入账号</string>
+    <string name="login_pswd">密码</string>
+    <string name="login_pswd_hint">请输入密码</string>
+    <string name="login_action">登录</string>
+
+    <string name="notify_dialog_title">通知读取权限</string>
+    <string name="notify_dialog_content">请开启通知读取权限</string>
+    <string name="notify_dialog_positive">确定</string>
+    <string name="notify_dialog_negative">退出</string>
+
+    <string name="main_title">千牛通知消息监听</string>
+    <string name="main_account">当前账号：</string>
+    <string name="main_tips">系统运行中，请勿退出</string>
+    <string name="main_logout">退出登录</string>
+    <string name="main_notify_ticker">摘要：</string>
+    <string name="main_notify_title">标题：</string>
+    <string name="main_notify_content">内容：</string>
+
 </resources>

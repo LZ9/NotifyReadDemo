@@ -5,6 +5,8 @@ import android.content.Intent
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import com.lodz.android.corekt.log.PrintLog
+import com.lodz.android.notifyreaddemo.event.NotifyEvent
+import org.greenrobot.eventbus.EventBus
 
 /**
  *
@@ -14,6 +16,8 @@ import com.lodz.android.corekt.log.PrintLog
 class NotificationService : NotificationListenerService() {
 
     private val SERVICE_TAG = "notifyServiceTag"
+
+    private val QN_PKG_NAME = "com.taobao.qianniu"
 
     private var mData = ""
 
@@ -25,20 +29,26 @@ class NotificationService : NotificationListenerService() {
 
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
         super.onNotificationPosted(sbn)
-        if (sbn == null){
+        if (sbn == null) {
+            return
+        }
+        if (!QN_PKG_NAME.equals(sbn.packageName)){
             return
         }
         try {
-            val tickerText = sbn.notification?.tickerText?.toString() ?: ""
+            val ticker = sbn.notification?.tickerText?.toString() ?: ""
+            var title = ""
+            var content = ""
+            PrintLog.iS(SERVICE_TAG, "tickerText : $ticker")
             val extras = sbn.notification.extras
             if (extras != null) {
-                val title = extras.getString(Notification.EXTRA_TITLE, "")
-                val content = extras.getString(Notification.EXTRA_TEXT, "")
+                title = extras.getString(Notification.EXTRA_TITLE, "")
+                content = extras.getString(Notification.EXTRA_TEXT, "")
                 PrintLog.iS(SERVICE_TAG, "title : $title")
                 PrintLog.iS(SERVICE_TAG, "content : $content")
             }
-            PrintLog.iS(SERVICE_TAG, "tickerText : $tickerText")
-        }catch (e:Exception){
+            EventBus.getDefault().post(NotifyEvent(ticker, title, content))
+        } catch (e: Exception) {
             e.printStackTrace()
             PrintLog.eS(SERVICE_TAG, "sbn 解析失败")
         }

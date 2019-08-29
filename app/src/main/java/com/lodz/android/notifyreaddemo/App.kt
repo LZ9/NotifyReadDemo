@@ -5,6 +5,7 @@ import com.lodz.android.corekt.network.NetworkManager
 import com.lodz.android.corekt.threadpool.ThreadPoolManager
 import com.lodz.android.corekt.utils.UiHandler
 import com.lodz.android.pandora.base.application.BaseApplication
+import com.tencent.bugly.crashreport.CrashReport
 
 /**
  * @author zhouL
@@ -20,6 +21,7 @@ class App :BaseApplication(){
     override fun onStartCreate() {
         PrintLog.setPrint(BuildConfig.LOG_DEBUG)// 配置日志开关
         NetworkManager.get().init(this)
+        CrashReport.initCrashReport(getApplicationContext(), "b47187b85f", false)
     }
 
     override fun onExit() {

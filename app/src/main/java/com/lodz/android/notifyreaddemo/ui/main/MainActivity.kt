@@ -1,78 +1,72 @@
 package com.lodz.android.notifyreaddemo.ui.main
 
-import android.app.Activity
-import android.app.NotificationManager
-import android.content.ComponentName
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
-import android.os.Build
-import android.provider.Settings
-import android.text.TextUtils
-import androidx.appcompat.app.AlertDialog
+import android.os.Bundle
+import android.widget.TextView
+import com.google.android.material.button.MaterialButton
+import com.lodz.android.corekt.anko.bindView
 import com.lodz.android.notifyreaddemo.App
 import com.lodz.android.notifyreaddemo.R
-import com.lodz.android.pandora.base.activity.BaseActivity
+import com.lodz.android.notifyreaddemo.event.NotifyEvent
+import com.lodz.android.notifyreaddemo.ui.login.LoginActivity
+import com.lodz.android.pandora.base.activity.AbsActivity
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 
-class MainActivity : BaseActivity() {
-    override fun getLayoutId(): Int = R.layout.activity_main
+class MainActivity : AbsActivity() {
 
-    override fun initData() {
-        super.initData()
-        if (!isNotifyPermissionGranted()){
-            showNotifyDialog()
+
+    companion object {
+        private const val EXTRA_ACCOUNT_NAME = "extra_account_name"
+
+        fun start(context: Context, account: String) {
+            val intent = Intent(context, MainActivity::class.java)
+            intent.putExtra(EXTRA_ACCOUNT_NAME, account)
+            context.startActivity(intent)
         }
     }
 
-    private fun showNotifyDialog() {
-        val dialog = AlertDialog.Builder(getContext())
-            .setTitle("通知读取权限")
-            .setMessage("请开启通知读取权限")
-            .setCancelable(false)
-            .setPositiveButton("确定", DialogInterface.OnClickListener { dialog, which ->
-                startActivityForResult(
-                    Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS),
-                    Activity.RESULT_FIRST_USER
-                )
-            })
-            .setNegativeButton("退出", DialogInterface.OnClickListener { dialog, which ->
-                App.get().exit()
-            })
-            .create()
-        dialog.show()
+    private val mAccountTv by bindView<TextView>(R.id.account_tv)
+    private val mNotifyTickerTv by bindView<TextView>(R.id.notify_ticker_tv)
+    private val mNotifyTitleTv by bindView<TextView>(R.id.notify_title_tv)
+    private val mNotifyContentTv by bindView<TextView>(R.id.notify_content_tv)
+    private val mLogoutBtn by bindView<MaterialButton>(R.id.logout_btn)
+    private lateinit var mAccountName: String
+
+    override fun startCreate() {
+        super.startCreate()
+        mAccountName = intent?.getStringExtra(EXTRA_ACCOUNT_NAME) ?: ""
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == Activity.RESULT_FIRST_USER) {
-            if (!isNotifyPermissionGranted()){
-                showNotifyDialog()
-            }
+    override fun getAbsLayoutId(): Int = R.layout.activity_main
+
+    override fun findViews(savedInstanceState: Bundle?) {
+        super.findViews(savedInstanceState)
+        mAccountTv.text = StringBuilder().append(getString(R.string.main_account)).append(mAccountName)
+        mNotifyTickerTv.text = StringBuilder().append(getString(R.string.main_notify_ticker)).append("无")
+        mNotifyTitleTv.text = StringBuilder().append(getString(R.string.main_notify_title)).append("无")
+        mNotifyContentTv.text = StringBuilder().append(getString(R.string.main_notify_content)).append("无")
+    }
+
+    override fun setListeners() {
+        super.setListeners()
+        mLogoutBtn.setOnClickListener {
+            LoginActivity.start(getContext())
+            finish()
         }
     }
 
-    private fun isNotifyPermissionGranted(): Boolean {
-        val manager: NotificationManager =
-            getContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-            return manager.isNotificationListenerAccessGranted(
-                ComponentName.unflattenFromString(
-                    Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS
-                )
-            )
-        } else {
-            val flat = Settings.Secure.getString(contentResolver, "enabled_notification_listeners")
-            if (!flat.isNullOrEmpty()) {
-                val names = flat.split(":")
-                for (name in names) {
-                    val cn = ComponentName.unflattenFromString(name)
-                    if (cn != null) {
-                        return TextUtils.equals(packageName, cn.packageName)
-                    }
-                }
-            }
-        }
-        return false
+    override fun onPressBack(): Boolean {
+        App.get().exit()
+        return true
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onNotifyEvent(event: NotifyEvent) {
+        mNotifyTickerTv.text = StringBuilder().append(getString(R.string.main_notify_ticker)).append(event.ticker)
+        mNotifyTitleTv.text = StringBuilder().append(getString(R.string.main_notify_title)).append(event.title)
+        mNotifyContentTv.text = StringBuilder().append(getString(R.string.main_notify_content)).append(event.content)
     }
 }
