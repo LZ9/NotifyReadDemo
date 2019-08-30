@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 28
@@ -64,6 +65,11 @@ android {
 }
 
 dependencies {
+    // pandora
     implementation 'com.lodz:pandora:1.1.8'
+    // bugly
     implementation 'com.tencent.bugly:crashreport:3.0.0'
+    // 权限申请
+    implementation 'org.permissionsdispatcher:permissionsdispatcher:4.5.0'
+    kapt 'org.permissionsdispatcher:permissionsdispatcher-processor:4.5.0'
 }

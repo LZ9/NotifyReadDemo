@@ -7,10 +7,6 @@ import com.lodz.android.corekt.utils.UiHandler
 import com.lodz.android.pandora.base.application.BaseApplication
 import com.tencent.bugly.crashreport.CrashReport
 
-/**
- * @author zhouL
- * @date 2019/8/29
- */
 class App :BaseApplication(){
 
     companion object {

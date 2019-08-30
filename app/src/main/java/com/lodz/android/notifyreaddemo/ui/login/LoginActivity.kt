@@ -17,10 +17,6 @@ import com.lodz.android.notifyreaddemo.R
 import com.lodz.android.notifyreaddemo.ui.main.MainActivity
 import com.lodz.android.pandora.base.activity.AbsActivity
 
-/**
- * @author zhouL
- * @date 2019/8/29
- */
 class LoginActivity : AbsActivity() {
 
     companion object {
@@ -65,7 +61,7 @@ class LoginActivity : AbsActivity() {
     }
 
     private fun showNotifyDialog() {
-        val dialog = AlertDialog.Builder(getContext())
+        AlertDialog.Builder(getContext())
             .setTitle(R.string.notify_dialog_title)
             .setMessage(R.string.notify_dialog_content)
             .setCancelable(false)
@@ -83,7 +79,7 @@ class LoginActivity : AbsActivity() {
                     App.get().exit()
                 })
             .create()
-        dialog.show()
+            .show()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

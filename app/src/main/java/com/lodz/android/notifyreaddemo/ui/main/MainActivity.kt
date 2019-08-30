@@ -29,6 +29,7 @@ class MainActivity : AbsActivity() {
     }
 
     private val mAccountTv by bindView<TextView>(R.id.account_tv)
+    private val mNotifyAppNameTv by bindView<TextView>(R.id.notify_app_name_tv)
     private val mNotifyTickerTv by bindView<TextView>(R.id.notify_ticker_tv)
     private val mNotifyTitleTv by bindView<TextView>(R.id.notify_title_tv)
     private val mNotifyContentTv by bindView<TextView>(R.id.notify_content_tv)
@@ -45,6 +46,7 @@ class MainActivity : AbsActivity() {
     override fun findViews(savedInstanceState: Bundle?) {
         super.findViews(savedInstanceState)
         mAccountTv.text = StringBuilder().append(getString(R.string.main_account)).append(mAccountName)
+        mNotifyAppNameTv.text = StringBuilder().append(getString(R.string.main_notify_app)).append("无")
         mNotifyTickerTv.text = StringBuilder().append(getString(R.string.main_notify_ticker)).append("无")
         mNotifyTitleTv.text = StringBuilder().append(getString(R.string.main_notify_title)).append("无")
         mNotifyContentTv.text = StringBuilder().append(getString(R.string.main_notify_content)).append("无")
@@ -65,6 +67,7 @@ class MainActivity : AbsActivity() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onNotifyEvent(event: NotifyEvent) {
+        mNotifyAppNameTv.text = StringBuilder().append(getString(R.string.main_notify_app)).append(event.getAppName())
         mNotifyTickerTv.text = StringBuilder().append(getString(R.string.main_notify_ticker)).append(event.ticker)
         mNotifyTitleTv.text = StringBuilder().append(getString(R.string.main_notify_title)).append(event.title)
         mNotifyContentTv.text = StringBuilder().append(getString(R.string.main_notify_content)).append(event.content)
