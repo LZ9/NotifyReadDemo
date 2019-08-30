@@ -48,6 +48,7 @@ class SplashActivity : AbsActivity() {
     /** 权限申请成功 */
     @NeedsPermission(
         Manifest.permission.READ_PHONE_STATE,// 手机状态
+        Manifest.permission.READ_SMS,// 读取短信
         Manifest.permission.WRITE_EXTERNAL_STORAGE,// 存储卡读写
         Manifest.permission.READ_EXTERNAL_STORAGE// 存储卡读写
     )
@@ -67,6 +68,7 @@ class SplashActivity : AbsActivity() {
     /** 用户拒绝后再次申请前告知用户为什么需要该权限 */
     @OnShowRationale(
         Manifest.permission.READ_PHONE_STATE,// 手机状态
+        Manifest.permission.READ_SMS,// 读取短信
         Manifest.permission.WRITE_EXTERNAL_STORAGE,// 存储卡读写
         Manifest.permission.READ_EXTERNAL_STORAGE// 存储卡读写
     )
@@ -77,6 +79,7 @@ class SplashActivity : AbsActivity() {
     /** 被拒绝 */
     @OnPermissionDenied(
         Manifest.permission.READ_PHONE_STATE,// 手机状态
+        Manifest.permission.READ_SMS,// 读取短信
         Manifest.permission.WRITE_EXTERNAL_STORAGE,// 存储卡读写
         Manifest.permission.READ_EXTERNAL_STORAGE// 存储卡读写
     )
@@ -87,6 +90,7 @@ class SplashActivity : AbsActivity() {
     /** 被拒绝并且勾选了不再提醒 */
     @OnNeverAskAgain(
         Manifest.permission.READ_PHONE_STATE,// 手机状态
+        Manifest.permission.READ_SMS,// 读取短信
         Manifest.permission.WRITE_EXTERNAL_STORAGE,// 存储卡读写
         Manifest.permission.READ_EXTERNAL_STORAGE// 存储卡读写
     )
