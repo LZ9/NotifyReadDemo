@@ -22,7 +22,6 @@ interface ApiService {
     @POST(" ")
     fun login(@Field("act") act: String, @Field("user") account: String, @Field("pass") pswd: String): Observable<LoginResponseBean>
 
-
     @FormUrlEncoded
     @POST(" ")
     fun sendVerificationCode(
@@ -33,4 +32,9 @@ interface ApiService {
         @Field("body") body: String,
         @Field("sign") sign: String
     ): Observable<ResponseBean>
+
+    @FormUrlEncoded
+    @POST(" ")
+    fun online(@Field("act") act: String, @Field("uid") uid: String, @Field("sign") sign: String): Observable<ResponseBean>
+
 }

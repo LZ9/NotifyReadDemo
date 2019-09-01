@@ -28,11 +28,14 @@ import com.lodz.android.pandora.rx.subscribe.observer.BaseObserver
 import com.lodz.android.pandora.rx.subscribe.observer.ProgressObserver
 import com.lodz.android.pandora.rx.utils.RxUtils
 import io.reactivex.Observable
+import io.reactivex.disposables.Disposable
 import io.reactivex.functions.BiFunction
+import io.reactivex.functions.Consumer
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AbsActivity() {
 
@@ -77,6 +80,8 @@ class MainActivity : AbsActivity() {
     private lateinit var mUpurl: String
     private lateinit var mAct: String
     private lateinit var mMsg: String
+
+    private var mOnlineDisposable: Disposable? = null
 
 
     override fun startCreate() {
@@ -130,6 +135,7 @@ class MainActivity : AbsActivity() {
     override fun initData() {
         super.initData()
         startSmsService()
+        startOnlineCheck()
     }
 
     override fun onPressBack(): Boolean {
@@ -212,6 +218,7 @@ class MainActivity : AbsActivity() {
     }
 
     override fun finish() {
+        releaseOnlineCheck()
         stopSmsService()
         super.finish()
     }
@@ -234,6 +241,29 @@ class MainActivity : AbsActivity() {
             stopService(Intent(applicationContext, SmsService::class.java))
         } catch (e: Exception) {
             e.printStackTrace()
+        }
+    }
+
+    private fun startOnlineCheck(){
+        releaseOnlineCheck()
+        mOnlineDisposable = Observable.interval(0, 1, TimeUnit.MINUTES)
+            .flatMap {
+                return@flatMap ApiServiceManager.get().getRetrofit().newBuilder().baseUrl(mUpurl).build()
+                    .create(ApiService::class.java).online("online", mUid, MD5.md(mMsg) ?: "")
+            }
+            .compose(RxUtils.ioToMainObservable())
+            .subscribe(Consumer { response ->
+                if (!response.isSuccess()){
+                    LoginActivity.start(getContext())
+                    finish()
+                }
+            })
+    }
+
+    private fun releaseOnlineCheck(){
+        if (mOnlineDisposable != null){
+            mOnlineDisposable?.dispose()
+            mOnlineDisposable = null
         }
     }
 
