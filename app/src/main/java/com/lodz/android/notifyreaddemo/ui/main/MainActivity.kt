@@ -23,6 +23,7 @@ import com.lodz.android.notifyreaddemo.service.SmsService
 import com.lodz.android.notifyreaddemo.ui.login.LoginActivity
 import com.lodz.android.pandora.base.activity.AbsActivity
 import com.lodz.android.pandora.rx.exception.DataException
+import com.lodz.android.pandora.rx.subscribe.observer.BaseObserver
 import com.lodz.android.pandora.rx.subscribe.observer.ProgressObserver
 import com.lodz.android.pandora.rx.utils.RxUtils
 import io.reactivex.Observable
@@ -137,6 +138,7 @@ class MainActivity : AbsActivity() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onSmsEvent(event: SmsEvent) {
+        showAlreadyUploadSuccess()
         mAdapter.setData(event.list.toMutableList())
         mAdapter.notifyDataSetChanged()
 
@@ -164,9 +166,7 @@ class MainActivity : AbsActivity() {
                 .compose(RxUtils.ioToMainObservable())
                 .subscribe(object : ProgressObserver<SmsBean>() {
                     override fun onPgNext(any: SmsBean) {
-                        val list = CacheManager.getNeedUploadList()
-                        mAdapter.setData(list.toMutableList())
-                        mAdapter.notifyDataSetChanged()
+                        showAlreadyUploadSuccess()
                     }
 
                     override fun onPgError(e: Throwable, isNetwork: Boolean) {
@@ -175,6 +175,26 @@ class MainActivity : AbsActivity() {
 
                 }.create(getContext(), "正在上传验证码", false, false))
         }
+    }
+
+    private fun showAlreadyUploadSuccess(){
+        Observable.just("")
+            .map {
+                val list = CacheManager.getAlreadyUploadList()
+                return@map list
+            }
+            .compose(RxUtils.ioToMainObservable())
+            .subscribe(object :BaseObserver<List<SmsBean>>(){
+                override fun onBaseNext(any: List<SmsBean>) {
+                    mAdapter.setData(any.toMutableList())
+                    mAdapter.notifyDataSetChanged()
+                }
+
+                override fun onBaseError(e: Throwable) {
+                    mAdapter.setData(ArrayList())
+                    mAdapter.notifyDataSetChanged()
+                }
+            })
     }
 
     override fun finish() {

@@ -18,6 +18,7 @@ object CacheManager {
         if (json.isEmpty()) {
             for (i in list.indices) {
                 list[i].isSave = true
+                list[i].isUpload = true
             }
             ACacheUtils.get().create().put(LOCAL_CACHE_KEY, JSON.toJSONString(list))
             return
@@ -41,7 +42,7 @@ object CacheManager {
             }
         }
 
-        localList.addAll(newList)
+        localList.addAll(0, newList)
         ACacheUtils.get().create().put(LOCAL_CACHE_KEY, JSON.toJSONString(localList))
     }
 
@@ -54,6 +55,21 @@ object CacheManager {
         val localList = JSON.parseObject(json, object : TypeReference<List<SmsBean>>() {})
         for (localBean in localList) {
             if (!localBean.isUpload) {
+                list.add(localBean)
+            }
+        }
+        return list
+    }
+
+    fun getAlreadyUploadList(): List<SmsBean> {
+        val list = ArrayList<SmsBean>()
+        val json = ACacheUtils.get().create().getAsString(LOCAL_CACHE_KEY)
+        if (json.isEmpty()) {
+            return list
+        }
+        val localList = JSON.parseObject(json, object : TypeReference<List<SmsBean>>() {})
+        for (localBean in localList) {
+            if (localBean.isUpload) {
                 list.add(localBean)
             }
         }
