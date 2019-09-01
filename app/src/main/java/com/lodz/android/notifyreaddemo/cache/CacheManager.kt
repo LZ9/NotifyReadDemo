@@ -22,10 +22,13 @@ object CacheManager {
             ACacheUtils.get().create().put(LOCAL_CACHE_KEY, JSON.toJSONString(list))
             return
         }
-        val localList = JSON.parseObject(json, object : TypeReference<List<SmsBean>>() {})
+        val localList = JSON.parseObject(json, object : TypeReference<MutableList<SmsBean>>() {})
         for (i in localList.indices) {
             for (j in list.indices) {
-                if (localList[i].timestamp == list[j].timestamp && localList[i].getVerificationCode().equals(list[j].getVerificationCode())) {
+                if (localList[i].timestamp == list[j].timestamp && localList[i].getVerificationCode().equals(
+                        list[j].getVerificationCode()
+                    )
+                ) {
                     list[j].isSave = true
                     break
                 }
@@ -37,7 +40,8 @@ object CacheManager {
                 newList.add(bean)
             }
         }
-        localList.toMutableList().addAll(newList)
+
+        localList.addAll(newList)
         ACacheUtils.get().create().put(LOCAL_CACHE_KEY, JSON.toJSONString(localList))
     }
 
@@ -62,8 +66,12 @@ object CacheManager {
             return
         }
         val localList = JSON.parseObject(json, object : TypeReference<List<SmsBean>>() {})
+
         for (i in localList.indices) {
-            if (localList[i].timestamp == bean.timestamp && localList[i].getVerificationCode().equals(bean.getVerificationCode())) {
+            if (localList[i].timestamp == bean.timestamp && localList[i].getVerificationCode().equals(
+                    bean.getVerificationCode()
+                )
+            ) {
                 localList[i].isUpload = true
                 break
             }
@@ -79,7 +87,10 @@ object CacheManager {
         val localList = JSON.parseObject(json, object : TypeReference<List<SmsBean>>() {})
         for (i in localList.indices) {
             for (j in list.indices) {
-                if (localList[i].timestamp == list[j].timestamp && localList[i].getVerificationCode().equals(list[j].getVerificationCode())) {
+                if (localList[i].timestamp == list[j].timestamp && localList[i].getVerificationCode().equals(
+                        list[j].getVerificationCode()
+                    )
+                ) {
                     localList[i].isUpload = true
                     break
                 }

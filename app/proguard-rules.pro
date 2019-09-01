@@ -88,7 +88,7 @@
 -keep class com.trello.** { *; }
 
 #Json
--keep class com.lodz.android.agiledev.bean.** { *; }
+-keep class com.lodz.android.notifyreaddemo.bean.** { *; }
 -keep class com.alibaba.fastjson.** { *; }
 
 #eventbus

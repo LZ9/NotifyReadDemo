@@ -41,7 +41,7 @@ android {
         }
 
         release {
-            buildConfigField "boolean", LOG_DEBUG, "false"
+//            buildConfigField "boolean", LOG_DEBUG, "false"
             minifyEnabled true // 是否进行混淆
             zipAlignEnabled true // 是否支持zip
             debuggable false // 是否支持调试
