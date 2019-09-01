@@ -114,4 +114,8 @@ object CacheManager {
         }
         ACacheUtils.get().create().put(LOCAL_CACHE_KEY, JSON.toJSONString(localList))
     }
+
+    fun clearCache(){
+        ACacheUtils.get().create().put(LOCAL_CACHE_KEY, "")
+    }
 }

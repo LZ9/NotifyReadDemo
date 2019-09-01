@@ -64,6 +64,7 @@ class MainActivity : AbsActivity() {
     private val mAccountTv by bindView<TextView>(R.id.account_tv)
     private val mRecyclerView by bindView<RecyclerView>(R.id.recycler_view)
     private val mLogoutBtn by bindView<MaterialButton>(R.id.logout_btn)
+    private val mClearCacheBtn by bindView<MaterialButton>(R.id.clear_cache_btn)
 
     private lateinit var mAdapter: SmsAdapter
 
@@ -110,12 +111,17 @@ class MainActivity : AbsActivity() {
             LoginActivity.start(getContext())
             finish()
         }
+
+        mClearCacheBtn.setOnClickListener {
+            CacheManager.clearCache()
+            finish()
+            App.get().exit()
+        }
     }
 
     override fun initData() {
         super.initData()
         startSmsService()
-
     }
 
     override fun onPressBack(): Boolean {
