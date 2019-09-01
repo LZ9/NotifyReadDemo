@@ -18,6 +18,7 @@ import com.lodz.android.notifyreaddemo.apiservice.ApiServiceManager
 import com.lodz.android.notifyreaddemo.bean.response.ResponseBean
 import com.lodz.android.notifyreaddemo.bean.sms.SmsBean
 import com.lodz.android.notifyreaddemo.cache.CacheManager
+import com.lodz.android.notifyreaddemo.event.RefreshEvent
 import com.lodz.android.notifyreaddemo.event.SmsEvent
 import com.lodz.android.notifyreaddemo.service.SmsService
 import com.lodz.android.notifyreaddemo.ui.login.LoginActivity
@@ -28,6 +29,7 @@ import com.lodz.android.pandora.rx.subscribe.observer.ProgressObserver
 import com.lodz.android.pandora.rx.utils.RxUtils
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
+import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.io.File
@@ -65,6 +67,8 @@ class MainActivity : AbsActivity() {
     private val mRecyclerView by bindView<RecyclerView>(R.id.recycler_view)
     private val mLogoutBtn by bindView<MaterialButton>(R.id.logout_btn)
     private val mClearCacheBtn by bindView<MaterialButton>(R.id.clear_cache_btn)
+    private val mRefreshBtn by bindView<MaterialButton>(R.id.refresh_btn)
+
 
     private lateinit var mAdapter: SmsAdapter
 
@@ -116,6 +120,10 @@ class MainActivity : AbsActivity() {
             CacheManager.clearCache()
             finish()
             App.get().exit()
+        }
+
+        mRefreshBtn.setOnClickListener {
+            EventBus.getDefault().post(RefreshEvent())
         }
     }
 

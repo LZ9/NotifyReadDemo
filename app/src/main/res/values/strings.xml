@@ -24,10 +24,11 @@
     <string name="notify_dialog_negative">退出</string>
 
     <string name="main_title">淘宝短信监听</string>
-    <string name="main_account">当前千牛账号：</string>
+    <string name="main_account">当前代理账号：</string>
     <string name="main_tips">系统运行中，请勿退出</string>
     <string name="main_logout">切换账号</string>
     <string name="main_clear_cache">清空缓存</string>
+    <string name="main_refresh">手动刷新</string>
     <string name="main_notify_app">消息来源：</string>
     <string name="main_notify_ticker">摘要：</string>
     <string name="main_notify_title">标题：</string>

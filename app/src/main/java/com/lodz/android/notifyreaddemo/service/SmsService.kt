@@ -14,6 +14,7 @@ import com.lodz.android.notifyreaddemo.App
 import com.lodz.android.notifyreaddemo.R
 import com.lodz.android.notifyreaddemo.bean.sms.SmsBean
 import com.lodz.android.notifyreaddemo.cache.CacheManager
+import com.lodz.android.notifyreaddemo.event.RefreshEvent
 import com.lodz.android.notifyreaddemo.event.SmsEvent
 import com.lodz.android.pandora.rx.subscribe.observer.BaseObserver
 import com.lodz.android.pandora.rx.utils.RxObservableOnSubscribe
@@ -23,6 +24,8 @@ import io.reactivex.ObservableEmitter
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Consumer
 import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
@@ -33,6 +36,11 @@ class SmsService : Service() {
     private val SERVICE_ID = 777777
 
     private var mDisposable: Disposable? = null
+
+    override fun onCreate() {
+        super.onCreate()
+        EventBus.getDefault().register(this)
+    }
 
     private fun getNotification(): Notification {
         val title = getString(R.string.app_name)
@@ -48,11 +56,25 @@ class SmsService : Service() {
         return builder.build()
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onRefreshEvent(event: RefreshEvent) {
+        querySms()
+            .compose(RxUtils.ioToMainObservable())
+            .subscribe(object :BaseObserver<List<SmsBean>>(){
+                override fun onBaseNext(any: List<SmsBean>) {
+                    PrintLog.dS(TAG, JSON.toJSONString(any))
+                    sendCode(any)
+                }
+
+                override fun onBaseError(e: Throwable) {
+                }
+            })
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startForeground(SERVICE_ID, getNotification())// 启动前台通知
         release()
-
-        mDisposable = Observable.interval(0, 20, TimeUnit.SECONDS)
+        mDisposable = Observable.interval(0, 10, TimeUnit.SECONDS)
             .flatMap {
                 return@flatMap querySms()
             }
@@ -131,6 +153,7 @@ class SmsService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        EventBus.getDefault().unregister(this)
         release()
     }
 
