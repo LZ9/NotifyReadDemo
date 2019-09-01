@@ -6,9 +6,17 @@ import android.widget.EditText
 import com.google.android.material.button.MaterialButton
 import com.lodz.android.corekt.anko.bindView
 import com.lodz.android.corekt.anko.toastShort
+import com.lodz.android.notifyreaddemo.App
 import com.lodz.android.notifyreaddemo.R
+import com.lodz.android.notifyreaddemo.apiservice.ApiService
+import com.lodz.android.notifyreaddemo.apiservice.ApiServiceManager
+import com.lodz.android.notifyreaddemo.bean.response.LoginResponseBean
+import com.lodz.android.notifyreaddemo.bean.response.ResponseBean
 import com.lodz.android.notifyreaddemo.ui.main.MainActivity
 import com.lodz.android.pandora.base.activity.AbsActivity
+import com.lodz.android.pandora.rx.subscribe.observer.ProgressObserver
+import com.lodz.android.pandora.rx.utils.RxUtils
+import java.io.File
 
 class LoginActivity : AbsActivity() {
 
@@ -19,6 +27,7 @@ class LoginActivity : AbsActivity() {
         }
     }
 
+    private val mUrlEdt by bindView<EditText>(R.id.http_edt)
     private val mAccountEdt by bindView<EditText>(R.id.account_edt)
     private val mPswdEdt by bindView<EditText>(R.id.pswd_edt)
     private val mLoginBtn by bindView<MaterialButton>(R.id.login_btn)
@@ -29,11 +38,23 @@ class LoginActivity : AbsActivity() {
     override fun setListeners() {
         super.setListeners()
         mLoginBtn.setOnClickListener {
-            loginAction(mAccountEdt.text.toString(), mPswdEdt.text.toString())
+            loginAction(
+                mUrlEdt.text.toString(),
+                mAccountEdt.text.toString(),
+                mPswdEdt.text.toString()
+            )
         }
     }
 
-    private fun loginAction(account: String, pswd: String) {
+    private fun loginAction(url: String, account: String, pswd: String) {
+        if (url.isEmpty()) {
+            toastShort(R.string.login_http_hint)
+            return
+        }
+        if (!url.endsWith(File.separator)) {
+            toastShort(R.string.login_http_error)
+            return
+        }
         if (account.isEmpty()) {
             toastShort(R.string.login_account_hint)
             return
@@ -42,18 +63,60 @@ class LoginActivity : AbsActivity() {
             toastShort(R.string.login_pswd_hint)
             return
         }
-        MainActivity.start(getContext(), account)
-        finish()
+
+        ApiServiceManager.get()
+            .getRetrofit().newBuilder().baseUrl("https://raw.githubusercontent.com/LZ9/NotifyReadDemo/master/").build()
+            .create(ApiService::class.java)
+            .certificate()
+            .compose(RxUtils.ioToMainObservable())
+            .subscribe(object : ProgressObserver<ResponseBean>() {
+                override fun onPgNext(any: ResponseBean) {
+                    login(url, account, pswd)
+                }
+
+                override fun onPgError(e: Throwable, isNetwork: Boolean) {
+                    toastShort(RxUtils.getExceptionTips(e, isNetwork, "校验失败"))
+                }
+            }.create(getContext(), "正在校验接口", false, false))
+    }
+
+    private fun login(url: String, account: String, pswd: String) {
+        ApiServiceManager.get()
+            .getRetrofit().newBuilder().baseUrl(url).build()
+            .create(ApiService::class.java).login("login", account, pswd)
+            .compose(RxUtils.ioToMainObservable())
+            .subscribe(object : ProgressObserver<LoginResponseBean>() {
+                override fun onPgNext(any: LoginResponseBean) {
+                    MainActivity.start(getContext(), account, any.uid, any.upurl, any.act, any.msg)
+                    finish()
+                }
+
+                override fun onPgError(e: Throwable, isNetwork: Boolean) {
+                    toastShort(RxUtils.getExceptionTips(e, isNetwork, "登录失败"))
+                }
+            }.create(getContext(), "正在登录", false, false))
     }
 
     override fun initData() {
         super.initData()
-        mAccountEdt.setText("123")
-        mPswdEdt.setText("123")
+        mUrlEdt.setText("https://dz.lfl224552.com/app_api.php/")
+        mUrlEdt.setSelection(0)
+        mAccountEdt.setText("app001")
+        mPswdEdt.setText("111111")
 
 //        if (!isNotifyPermissionGranted()) {
 //            showNotifyDialog()
 //        }
+    }
+
+    override fun onPressBack(): Boolean {
+        finish()
+        return true
+    }
+
+    override fun finish() {
+        super.finish()
+        App.get().exit()
     }
 
 //    private fun showNotifyDialog() {

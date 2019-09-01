@@ -9,6 +9,9 @@
     <string name="splash_check_permission_unconfirmed">再次确认</string>
     <string name="splash_check_permission_cancel">请在设置中打开权限后重启应用</string>
 
+    <string name="login_http">登录路径</string>
+    <string name="login_http_hint">请输入登录路径</string>
+    <string name="login_http_error">路径要以/结尾</string>
     <string name="login_account">账号</string>
     <string name="login_account_hint">请输入账号</string>
     <string name="login_pswd">密码</string>
@@ -28,5 +31,11 @@
     <string name="main_notify_ticker">摘要：</string>
     <string name="main_notify_title">标题：</string>
     <string name="main_notify_content">内容：</string>
+
+    <string name="sms_address">发信人：</string>
+    <string name="sms_date">日期：</string>
+    <string name="sms_body">内容：</string>
+    <string name="sms_verification_code">验证码：</string>
+
 
 </resources>

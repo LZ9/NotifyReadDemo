@@ -1,4 +1,4 @@
-package com.lodz.android.notifyreaddemo.bean
+package com.lodz.android.notifyreaddemo.bean.sms
 
 class SmsBean {
 

@@ -36,6 +36,11 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
 
+        <!--订阅日志标签-->
+        <meta-data
+            android:name="error_tag"
+            android:value="resultValue" />
+
         <activity
             android:name=".ui.splash.SplashActivity"
             android:screenOrientation="portrait">

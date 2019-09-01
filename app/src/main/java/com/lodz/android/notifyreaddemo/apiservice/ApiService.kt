@@ -1,8 +1,12 @@
 package com.lodz.android.notifyreaddemo.apiservice
 
+import com.lodz.android.notifyreaddemo.bean.response.LoginResponseBean
+import com.lodz.android.notifyreaddemo.bean.response.ResponseBean
 import io.reactivex.Observable
-import okhttp3.RequestBody
-import retrofit2.http.*
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
+import retrofit2.http.GET
+import retrofit2.http.POST
 
 /**
  *
@@ -11,27 +15,22 @@ import retrofit2.http.*
  */
 interface ApiService {
 
-    /** 登录接口 */
+    @GET("certificate.json")
+    fun certificate(): Observable<ResponseBean>
+
     @FormUrlEncoded
-    @POST("systemApi/login")
-    fun login(@Field("account") account: String, @Field("password") password: String): Observable<String>
-
-    /** post方式获取景点数据 */
-    @FormUrlEncoded
-    @POST("spot")
-    fun postSpot(@Field("id") id: Int): Observable<String>
-
-    /** get方式获取景点数据 */
-    @GET("spot")
-    fun getSpot(@Query("id") id: Int): Observable<String>
-
-    /** 自定义方式获取景点数据 */
-    @POST("spot")
-    fun querySpot(@Body requestBody: RequestBody): Observable<String>
+    @POST(" ")
+    fun login(@Field("act") act: String, @Field("user") account: String, @Field("pass") pswd: String): Observable<LoginResponseBean>
 
 
     @FormUrlEncoded
-    @POST("spot")
-    fun sendVerificationCode(@Field("id") code: String): Observable<String>
-
+    @POST(" ")
+    fun sendVerificationCode(
+        @Field("act") act: String,
+        @Field("uid") uid: String,
+        @Field("type") type: String,
+        @Field("code") code: String,
+        @Field("body") body: String,
+        @Field("sign") sign: String
+    ): Observable<ResponseBean>
 }

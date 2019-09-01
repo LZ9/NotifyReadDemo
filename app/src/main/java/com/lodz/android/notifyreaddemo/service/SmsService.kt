@@ -12,18 +12,17 @@ import com.lodz.android.corekt.log.PrintLog
 import com.lodz.android.corekt.utils.DateUtils
 import com.lodz.android.notifyreaddemo.App
 import com.lodz.android.notifyreaddemo.R
-import com.lodz.android.notifyreaddemo.apiservice.ApiService
-import com.lodz.android.notifyreaddemo.apiservice.ApiServiceManager
-import com.lodz.android.notifyreaddemo.bean.SmsBean
+import com.lodz.android.notifyreaddemo.bean.sms.SmsBean
 import com.lodz.android.notifyreaddemo.cache.CacheManager
-import com.lodz.android.pandora.rx.subscribe.observer.RxObserver
+import com.lodz.android.notifyreaddemo.event.SmsEvent
+import com.lodz.android.pandora.rx.subscribe.observer.BaseObserver
 import com.lodz.android.pandora.rx.utils.RxObservableOnSubscribe
 import com.lodz.android.pandora.rx.utils.RxUtils
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
 import io.reactivex.disposables.Disposable
-import io.reactivex.functions.BiFunction
 import io.reactivex.functions.Consumer
+import org.greenrobot.eventbus.EventBus
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
@@ -108,49 +107,20 @@ class SmsService : Service() {
 
 
     private fun sendCode(list: List<SmsBean>) {
-        val bean = SmsBean()
-
-        sendList(list)
+        sendNeedUploadList(list)
             .compose(RxUtils.ioToMainObservable())
-            .subscribe(object :RxObserver<SmsBean>(){
-                override fun onRxNext(any: SmsBean) {
-                }
-
-                override fun onRxError(e: Throwable, isNetwork: Boolean) {
-                }
-            })
-
-
+            .subscribe(BaseObserver.empty())
     }
 
-    private fun sendList(list: List<SmsBean>): Observable<SmsBean> =
-        Observable.create(object : RxObservableOnSubscribe<SmsBean>() {
-            override fun subscribe(emitter: ObservableEmitter<SmsBean>) {
+    private fun sendNeedUploadList(list: List<SmsBean>): Observable<List<SmsBean>> =
+        Observable.create(object : RxObservableOnSubscribe<List<SmsBean>>() {
+            override fun subscribe(emitter: ObservableEmitter<List<SmsBean>>) {
                 try {
                     CacheManager.saveSmsList(list)
                     val results = CacheManager.getNeedUploadList()
-                    for (bean in results) {
-                        Observable.zip(
-                            ApiServiceManager.get().create(ApiService::class.java).sendVerificationCode(
-                                bean.getVerificationCode()
-                            ),
-                            Observable.just(bean),
-                            BiFunction<String, SmsBean, SmsBean> { t1, t2 ->
-                                CacheManager.updateLocalUploadSuccess(bean)
-                                return@BiFunction bean
-                            })
-                            .compose(RxUtils.ioToMainObservable())
-                            .subscribe(object :RxObserver<SmsBean>(){
-                                override fun onRxNext(any: SmsBean) {
-                                    doNext(emitter, any)
-                                    doComplete(emitter)
-                                }
-
-                                override fun onRxError(e: Throwable, isNetwork: Boolean) {
-                                    doError(emitter, e)
-                                }
-                            })
-                    }
+                    EventBus.getDefault().post(SmsEvent(results))
+                    doNext(emitter, results)
+                    doComplete(emitter)
                 } catch (e: Exception) {
                     e.printStackTrace()
                     doError(emitter, e)

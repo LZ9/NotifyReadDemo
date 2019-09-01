@@ -2,7 +2,7 @@ package com.lodz.android.notifyreaddemo.cache
 
 import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.TypeReference
-import com.lodz.android.notifyreaddemo.bean.SmsBean
+import com.lodz.android.notifyreaddemo.bean.sms.SmsBean
 import com.lodz.android.pandora.utils.acache.ACacheUtils
 
 /**
@@ -68,7 +68,7 @@ object CacheManager {
                 break
             }
         }
-
+        ACacheUtils.get().create().put(LOCAL_CACHE_KEY, JSON.toJSONString(localList))
     }
 
     fun updateLocalUploadSuccess(list: List<SmsBean>) {
@@ -85,6 +85,6 @@ object CacheManager {
                 }
             }
         }
-
+        ACacheUtils.get().create().put(LOCAL_CACHE_KEY, JSON.toJSONString(localList))
     }
 }

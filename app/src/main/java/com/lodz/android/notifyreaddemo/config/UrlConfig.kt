@@ -10,11 +10,9 @@ import androidx.annotation.Keep
 object UrlConfig {
 
     @Keep
-    private const val Release = "http://www.baidu.com/" // 正式地址
-    @Keep
-    private const val Test = "http://192.168.5.210:8080/app/mock/32/POST/yszz/" // 测试地址
+    private const val Release = "https://dz.lfl224552.com/app_api.php/" // 正式地址
 
 
     /** 正式环境 */
-    const val BASE_URL = Test
+    var BASE_URL = Release
 }
