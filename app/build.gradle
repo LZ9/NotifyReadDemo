@@ -10,8 +10,8 @@ android {
         applicationId "com.lodz.android.notifyreaddemo"
         minSdkVersion 22
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1"
 
         ndk {
             // 设置支持的SO库架构
@@ -55,9 +55,9 @@ android {
             def newName
             if (variant.baseName.endsWith('release')) {
                 def formattedDate = new Date().format('yyyyMMddHHmm')
-                newName = "千牛代收-v" + defaultConfig.versionName + "-" + variant.baseName + "-" + formattedDate + ".apk"
+                newName = "淘宝短信解析-v" + defaultConfig.versionName + "-" + variant.baseName + "-" + formattedDate + ".apk"
             } else {
-                newName = "千牛代收-v" + defaultConfig.versionName + "-" + variant.baseName + ".apk"
+                newName = "淘宝短信解析-v" + defaultConfig.versionName + "-" + variant.baseName + ".apk"
             }
             outputFileName = newName
         }

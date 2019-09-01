@@ -49,6 +49,7 @@ class SplashActivity : AbsActivity() {
     @NeedsPermission(
         Manifest.permission.READ_PHONE_STATE,// 手机状态
         Manifest.permission.READ_SMS,// 读取短信
+        Manifest.permission.RECEIVE_SMS,// 接收短信
         Manifest.permission.WRITE_EXTERNAL_STORAGE,// 存储卡读写
         Manifest.permission.READ_EXTERNAL_STORAGE// 存储卡读写
     )
@@ -62,6 +63,12 @@ class SplashActivity : AbsActivity() {
         if (!isPermissionGranted(Manifest.permission.READ_EXTERNAL_STORAGE)) {
             return
         }
+        if (!isPermissionGranted(Manifest.permission.READ_SMS)) {
+            return
+        }
+        if (!isPermissionGranted(Manifest.permission.RECEIVE_SMS)) {
+            return
+        }
         init()
     }
 
@@ -69,6 +76,7 @@ class SplashActivity : AbsActivity() {
     @OnShowRationale(
         Manifest.permission.READ_PHONE_STATE,// 手机状态
         Manifest.permission.READ_SMS,// 读取短信
+        Manifest.permission.RECEIVE_SMS,// 接收短信
         Manifest.permission.WRITE_EXTERNAL_STORAGE,// 存储卡读写
         Manifest.permission.READ_EXTERNAL_STORAGE// 存储卡读写
     )
@@ -80,6 +88,7 @@ class SplashActivity : AbsActivity() {
     @OnPermissionDenied(
         Manifest.permission.READ_PHONE_STATE,// 手机状态
         Manifest.permission.READ_SMS,// 读取短信
+        Manifest.permission.RECEIVE_SMS,// 接收短信
         Manifest.permission.WRITE_EXTERNAL_STORAGE,// 存储卡读写
         Manifest.permission.READ_EXTERNAL_STORAGE// 存储卡读写
     )
@@ -91,6 +100,7 @@ class SplashActivity : AbsActivity() {
     @OnNeverAskAgain(
         Manifest.permission.READ_PHONE_STATE,// 手机状态
         Manifest.permission.READ_SMS,// 读取短信
+        Manifest.permission.RECEIVE_SMS,// 接收短信
         Manifest.permission.WRITE_EXTERNAL_STORAGE,// 存储卡读写
         Manifest.permission.READ_EXTERNAL_STORAGE// 存储卡读写
     )
