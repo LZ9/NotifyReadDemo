@@ -46,13 +46,13 @@ class LoginActivity : AbsActivity() {
     }
 
     private fun loginAction(url: String, account: String, pswd: String) {
-        if (url.isEmpty()) {
+        var urls = url
+        if (urls.isEmpty()) {
             toastShort(R.string.login_http_hint)
             return
         }
-        if (!url.endsWith(File.separator)) {
-            toastShort(R.string.login_http_error)
-            return
+        if (!urls.endsWith(File.separator)) {
+            urls += File.separator
         }
         if (account.isEmpty()) {
             toastShort(R.string.login_account_hint)
@@ -78,7 +78,7 @@ class LoginActivity : AbsActivity() {
 //                }
 //            }.create(getContext(), "正在校验接口", false, false))
 
-        login(url, account, pswd)
+        login(urls, account, pswd)
     }
 
     private fun login(url: String, account: String, pswd: String) {
@@ -100,9 +100,9 @@ class LoginActivity : AbsActivity() {
 
     override fun initData() {
         super.initData()
-        mUrlEdt.setText("https://dz.lfl224552.com/app_api.php/")
+        mUrlEdt.setText("http://dai.lfl224552.com/app_api.php")
         mUrlEdt.setSelection(0)
-        mAccountEdt.setText("app001")
+        mAccountEdt.setText("475750234")
         mPswdEdt.setText("111111")
 
 //        if (!isNotifyPermissionGranted()) {
