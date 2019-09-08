@@ -4,10 +4,11 @@ import android.app.Notification
 import android.app.Service
 import android.content.Intent
 import android.database.Cursor
-import android.net.Uri
 import android.os.IBinder
+import android.provider.Telephony
 import androidx.core.app.NotificationCompat
 import com.alibaba.fastjson.JSON
+import com.lodz.android.corekt.anko.toastShort
 import com.lodz.android.corekt.log.PrintLog
 import com.lodz.android.corekt.utils.DateUtils
 import com.lodz.android.notifyreaddemo.App
@@ -90,12 +91,11 @@ class SmsService : Service() {
     private fun querySms(): Observable<List<SmsBean>> =
         Observable.create(object : RxObservableOnSubscribe<List<SmsBean>>() {
             override fun subscribe(emitter: ObservableEmitter<List<SmsBean>>) {
-                val uri = Uri.parse("content://sms/")
                 val list = ArrayList<SmsBean>()
                 var cursor: Cursor? = null
                 try {
                     cursor = contentResolver?.query(
-                        uri,
+                        Telephony.Sms.CONTENT_URI,
                         arrayOf("_id", "address", "body", "date", "type"),
                         "body like ?",
                         arrayOf("%淘宝网%"),
@@ -131,7 +131,16 @@ class SmsService : Service() {
     private fun sendCode(list: List<SmsBean>) {
         sendNeedUploadList(list)
             .compose(RxUtils.ioToMainObservable())
-            .subscribe(BaseObserver.empty())
+            .subscribe(object :BaseObserver<List<SmsBean>>(){
+                override fun onBaseNext(any: List<SmsBean>) {
+                    for (bean in any) {
+                        toastShort(bean.getVerificationCode())
+                    }
+                    PrintLog.dS("listtag", "need update list : " + JSON.toJSONString(any))
+                }
+                override fun onBaseError(e: Throwable) {
+                }
+            })
     }
 
     private fun sendNeedUploadList(list: List<SmsBean>): Observable<List<SmsBean>> =

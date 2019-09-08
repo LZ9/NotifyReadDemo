@@ -11,7 +11,6 @@ import com.lodz.android.notifyreaddemo.R
 import com.lodz.android.notifyreaddemo.apiservice.ApiService
 import com.lodz.android.notifyreaddemo.apiservice.ApiServiceManager
 import com.lodz.android.notifyreaddemo.bean.response.LoginResponseBean
-import com.lodz.android.notifyreaddemo.bean.response.ResponseBean
 import com.lodz.android.notifyreaddemo.ui.main.MainActivity
 import com.lodz.android.pandora.base.activity.AbsActivity
 import com.lodz.android.pandora.rx.subscribe.observer.ProgressObserver
@@ -64,20 +63,22 @@ class LoginActivity : AbsActivity() {
             return
         }
 
-        ApiServiceManager.get()
-            .getRetrofit().newBuilder().baseUrl("https://raw.githubusercontent.com/LZ9/NotifyReadDemo/master/").build()
-            .create(ApiService::class.java)
-            .certificate()
-            .compose(RxUtils.ioToMainObservable())
-            .subscribe(object : ProgressObserver<ResponseBean>() {
-                override fun onPgNext(any: ResponseBean) {
-                    login(url, account, pswd)
-                }
+//        ApiServiceManager.get()
+//            .getRetrofit().newBuilder().baseUrl("https://raw.githubusercontent.com/LZ9/NotifyReadDemo/master/").build()
+//            .create(ApiService::class.java)
+//            .certificate()
+//            .compose(RxUtils.ioToMainObservable())
+//            .subscribe(object : ProgressObserver<ResponseBean>() {
+//                override fun onPgNext(any: ResponseBean) {
+//                    login(url, account, pswd)
+//                }
+//
+//                override fun onPgError(e: Throwable, isNetwork: Boolean) {
+//                    toastShort(RxUtils.getExceptionTips(e, isNetwork, "校验失败"))
+//                }
+//            }.create(getContext(), "正在校验接口", false, false))
 
-                override fun onPgError(e: Throwable, isNetwork: Boolean) {
-                    toastShort(RxUtils.getExceptionTips(e, isNetwork, "校验失败"))
-                }
-            }.create(getContext(), "正在校验接口", false, false))
+        login(url, account, pswd)
     }
 
     private fun login(url: String, account: String, pswd: String) {
