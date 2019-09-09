@@ -100,10 +100,10 @@ class LoginActivity : AbsActivity() {
 
     override fun initData() {
         super.initData()
-        mUrlEdt.setText("http://dai.lfl224552.com/app_api.php")
-        mUrlEdt.setSelection(0)
-        mAccountEdt.setText("475750234")
-        mPswdEdt.setText("111111")
+//        mUrlEdt.setText("http://dai.lfl224552.com/app_api.php")
+//        mUrlEdt.setSelection(0)
+//        mAccountEdt.setText("475750234")
+//        mPswdEdt.setText("111111")
 
 //        if (!isNotifyPermissionGranted()) {
 //            showNotifyDialog()
