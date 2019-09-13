@@ -15,11 +15,16 @@ import com.lodz.android.notifyreaddemo.ui.main.MainActivity
 import com.lodz.android.pandora.base.activity.AbsActivity
 import com.lodz.android.pandora.rx.subscribe.observer.ProgressObserver
 import com.lodz.android.pandora.rx.utils.RxUtils
+import com.lodz.android.pandora.utils.acache.ACacheUtils
 import java.io.File
 
 class LoginActivity : AbsActivity() {
 
     companion object {
+        private const val KEY_URL = "key_url"
+        private const val KEY_ACCOUNT = "key_account"
+        private const val KEY_PSWD = "key_pswd"
+
         fun start(context: Context) {
             val intent = Intent(context, LoginActivity::class.java)
             context.startActivity(intent)
@@ -88,6 +93,9 @@ class LoginActivity : AbsActivity() {
             .compose(RxUtils.ioToMainObservable())
             .subscribe(object : ProgressObserver<LoginResponseBean>() {
                 override fun onPgNext(any: LoginResponseBean) {
+                    ACacheUtils.get().create().put(KEY_URL, url)
+                    ACacheUtils.get().create().put(KEY_ACCOUNT, account)
+                    ACacheUtils.get().create().put(KEY_PSWD, pswd)
                     MainActivity.start(getContext(), account, any.uid, any.upurl, any.act, any.msg)
                     finish()
                 }
@@ -100,14 +108,9 @@ class LoginActivity : AbsActivity() {
 
     override fun initData() {
         super.initData()
-//        mUrlEdt.setText("http://dai.lfl224552.com/app_api.php")
-//        mUrlEdt.setSelection(0)
-//        mAccountEdt.setText("475750234")
-//        mPswdEdt.setText("111111")
-
-//        if (!isNotifyPermissionGranted()) {
-//            showNotifyDialog()
-//        }
+        mUrlEdt.setText(ACacheUtils.get().create().getAsString(KEY_URL))
+        mAccountEdt.setText(ACacheUtils.get().create().getAsString(KEY_ACCOUNT))
+        mPswdEdt.setText(ACacheUtils.get().create().getAsString(KEY_PSWD))
     }
 
     override fun onPressBack(): Boolean {
