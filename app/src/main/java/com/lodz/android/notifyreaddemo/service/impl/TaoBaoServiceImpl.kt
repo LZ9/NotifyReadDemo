@@ -39,7 +39,7 @@ class TaoBaoServiceImpl : ServiceContract {
         release()
         mDisposable = Observable.interval(0, 10, TimeUnit.SECONDS)
             .flatMap {
-                return@flatMap querySms()
+                return@flatMap queryTaoBaoSms()
             }
             .compose(RxUtils.ioToMainObservable())
             .subscribe(Consumer { list ->
@@ -53,7 +53,7 @@ class TaoBaoServiceImpl : ServiceContract {
     }
 
     override fun onRefreshEvent(event: RefreshEvent) {
-        querySms()
+        queryTaoBaoSms()
             .compose(RxUtils.ioToMainObservable())
             .subscribe(object : BaseObserver<List<SmsBean>>(){
                 override fun onBaseNext(any: List<SmsBean>) {
@@ -66,7 +66,7 @@ class TaoBaoServiceImpl : ServiceContract {
             })
     }
 
-    private fun querySms(): Observable<List<SmsBean>> =
+    private fun queryTaoBaoSms(): Observable<List<SmsBean>> =
         Observable.create(object : RxObservableOnSubscribe<List<SmsBean>>() {
             override fun subscribe(emitter: ObservableEmitter<List<SmsBean>>) {
                 val list = ArrayList<SmsBean>()

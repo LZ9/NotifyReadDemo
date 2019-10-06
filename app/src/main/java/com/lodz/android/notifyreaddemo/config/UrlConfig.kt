@@ -2,11 +2,6 @@ package com.lodz.android.notifyreaddemo.config
 
 import androidx.annotation.Keep
 
-/**
- * 地址配置
- * @author zhouL
- * @date 2019/3/22
- */
 object UrlConfig {
 
     @Keep

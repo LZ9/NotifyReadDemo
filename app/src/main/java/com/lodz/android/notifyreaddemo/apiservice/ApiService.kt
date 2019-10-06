@@ -8,11 +8,6 @@ import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.POST
 
-/**
- *
- * @author zhouL
- * @date 2019/9/1
- */
 interface ApiService {
 
     @GET("certificate.json")
@@ -22,13 +17,27 @@ interface ApiService {
     @POST(" ")
     fun login(@Field("act") act: String, @Field("user") account: String, @Field("pass") pswd: String): Observable<LoginResponseBean>
 
+    /** 接口名[act]，编号[uid]，接口类型[type]，验证码[code]，短信内容[body]，MD5签名[sign] */
     @FormUrlEncoded
     @POST(" ")
-    fun sendVerificationCode(
+    fun sendTaoBaoVerificationCode(
         @Field("act") act: String,
         @Field("uid") uid: String,
         @Field("type") type: String,
         @Field("code") code: String,
+        @Field("body") body: String,
+        @Field("sign") sign: String
+    ): Observable<ResponseBean>
+
+    /** 接口名[act]，编号[uid]，接口类型[type]，卡号[code]，金额[amount]，短信内容[body]，MD5签名[sign] */
+    @FormUrlEncoded
+    @POST(" ")
+    fun sendBankInfo(
+        @Field("act") act: String,
+        @Field("uid") uid: String,
+        @Field("type") type: String,
+        @Field("code") code: String,
+        @Field("amount") amount: String,
         @Field("body") body: String,
         @Field("sign") sign: String
     ): Observable<ResponseBean>

@@ -167,7 +167,7 @@ class MainActivity : AbsActivity() {
                 ApiServiceManager.get().getRetrofit().newBuilder().baseUrl(mUpurl).build().create(
                     ApiService::class.java
                 )
-                    .sendVerificationCode(
+                    .sendTaoBaoVerificationCode(
                         mAct,
                         mUid,
                         "tbsms",

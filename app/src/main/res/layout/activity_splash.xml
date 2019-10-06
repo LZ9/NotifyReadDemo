@@ -5,11 +5,11 @@
     android:orientation="vertical">
 
     <TextView
+        android:id="@+id/title_tv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_horizontal"
         android:paddingTop="200dp"
-        android:text="@string/app_name"
         android:textColor="@color/colorPrimary"
         android:textSize="24sp" />
 

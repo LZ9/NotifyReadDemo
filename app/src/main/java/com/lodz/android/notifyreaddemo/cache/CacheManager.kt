@@ -5,11 +5,6 @@ import com.alibaba.fastjson.TypeReference
 import com.lodz.android.notifyreaddemo.bean.sms.SmsBean
 import com.lodz.android.pandora.utils.acache.ACacheUtils
 
-/**
- *
- * @author zhouL
- * @date 2019/9/1
- */
 object CacheManager {
     private const val LOCAL_CACHE_KEY = "local_cache_key"
 

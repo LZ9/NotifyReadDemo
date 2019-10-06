@@ -12,11 +12,6 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import java.util.concurrent.TimeUnit
 
-/**
- * 接口管理器
- * @author zhouL
- * @date 2019/3/22
- */
 class ApiServiceManager private constructor() {
 
     companion object {

@@ -19,6 +19,8 @@ class App : BaseApplication() {
 
     companion object {
         const val NOTIFI_GROUP_SERVICE = "group_service"
+        const val APP_TAOBAO_TYPE = 1
+        const val APP_BANK_TYPE = 2
 
         fun get(): App = BaseApplication.get() as App
     }

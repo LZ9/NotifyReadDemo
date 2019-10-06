@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.lodz.android.notifyreaddemo.App
+import com.lodz.android.notifyreaddemo.BuildConfig
 import com.lodz.android.notifyreaddemo.R
 import com.lodz.android.notifyreaddemo.event.RefreshEvent
 import com.lodz.android.notifyreaddemo.service.impl.BankServiceImpl
@@ -25,8 +26,12 @@ class SmsService : Service() {
         super.onCreate()
         EventBus.getDefault().register(this)
         if (mServiceList.size == 0) {
-            mServiceList.add(TaoBaoServiceImpl())
-            mServiceList.add(BankServiceImpl())
+            if (BuildConfig.APP_TYPE == App.APP_TAOBAO_TYPE){
+                mServiceList.add(TaoBaoServiceImpl())
+            }
+            if (BuildConfig.APP_TYPE == App.APP_BANK_TYPE){
+                mServiceList.add(BankServiceImpl())
+            }
         }
         for (contract in mServiceList) {
             contract.onCreate(this)
@@ -34,7 +39,7 @@ class SmsService : Service() {
     }
 
     private fun getNotification(): Notification {
-        val title = getString(R.string.app_name)
+        val title = BuildConfig.APP_NAME
         val content = "正在为您监测短信信息"
         val builder = NotificationCompat.Builder(applicationContext, App.NOTIFI_GROUP_SERVICE)
         builder.setTicker(title)

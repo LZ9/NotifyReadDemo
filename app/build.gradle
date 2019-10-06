@@ -19,10 +19,14 @@ android {
         }
     }
 
-    //日志开关
-    def LOG_DEBUG = "LOG_DEBUG"
+
+    def LOG_DEBUG = "LOG_DEBUG" //日志开关
+    def APP_NAME = "APP_NAME"//应用名称
+    def APP_TYPE = "APP_TYPE"//应用类型
     defaultConfig {
         buildConfigField "boolean", LOG_DEBUG, "true"
+        buildConfigField "String", APP_NAME, "\"淘宝短信解析\""
+        buildConfigField "int", APP_TYPE, "0"
     }
 
     // 程序在编译的时候会检查lint，有任何错误提示会停止build，我们可以关闭这个开关
@@ -49,15 +53,41 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    flavorDimensions 'Channel'
+    productFlavors {
+        TaobaoSms {
+            dimension = 'Channel'
+            applicationId = 'com.lodz.android.notifyreaddemo'
+            versionCode = 3
+            versionName = '1.2'
+            buildConfigField "String", APP_NAME, "\"淘宝短信解析\""
+            buildConfigField "int", APP_TYPE, "1"
+            manifestPlaceholders = [
+                    APP_NAME: "淘宝短信解析",
+            ]
+        }
+        BankSms {
+            dimension = 'Channel'
+            applicationId = 'com.lodz.android.banksms'
+            versionCode = 1
+            versionName = '1.0'
+            buildConfigField "String", APP_NAME, "\"银行短信解析\""
+            buildConfigField "int", APP_TYPE, "2"
+            manifestPlaceholders = [
+                    APP_NAME: "银行短信解析",
+            ]
+        }
+    }
+
 
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
             def newName
             if (variant.baseName.endsWith('release')) {
                 def formattedDate = new Date().format('yyyyMMddHHmm')
-                newName = "淘宝短信解析-v" + defaultConfig.versionName + "-" + variant.baseName + "-" + formattedDate + ".apk"
+                newName = variant.getMergedFlavor().getBuildConfigFields().get("APP_NAME").value.replace("\"", "") + "-v" + variant.versionName + "-" + variant.baseName + "-" + formattedDate + ".apk"
             } else {
-                newName = "淘宝短信解析-v" + defaultConfig.versionName + "-" + variant.baseName + ".apk"
+                newName = variant.getMergedFlavor().getBuildConfigFields().get("APP_NAME").value.replace("\"", "") + "-v" + variant.versionName + "-" + variant.baseName + ".apk"
             }
             outputFileName = newName
         }

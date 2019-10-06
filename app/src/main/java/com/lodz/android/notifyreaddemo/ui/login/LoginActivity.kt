@@ -2,11 +2,14 @@ package com.lodz.android.notifyreaddemo.ui.login
 
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import android.widget.EditText
+import android.widget.TextView
 import com.google.android.material.button.MaterialButton
 import com.lodz.android.corekt.anko.bindView
 import com.lodz.android.corekt.anko.toastShort
 import com.lodz.android.notifyreaddemo.App
+import com.lodz.android.notifyreaddemo.BuildConfig
 import com.lodz.android.notifyreaddemo.R
 import com.lodz.android.notifyreaddemo.apiservice.ApiService
 import com.lodz.android.notifyreaddemo.apiservice.ApiServiceManager
@@ -31,13 +34,18 @@ class LoginActivity : AbsActivity() {
         }
     }
 
+    private val mTitleTv by bindView<TextView>(R.id.title_tv)
     private val mUrlEdt by bindView<EditText>(R.id.http_edt)
     private val mAccountEdt by bindView<EditText>(R.id.account_edt)
     private val mPswdEdt by bindView<EditText>(R.id.pswd_edt)
     private val mLoginBtn by bindView<MaterialButton>(R.id.login_btn)
 
-
     override fun getAbsLayoutId(): Int = R.layout.activity_login
+
+    override fun findViews(savedInstanceState: Bundle?) {
+        super.findViews(savedInstanceState)
+        mTitleTv.setText(BuildConfig.APP_NAME)
+    }
 
     override fun setListeners() {
         super.setListeners()
@@ -108,6 +116,10 @@ class LoginActivity : AbsActivity() {
 
     override fun initData() {
         super.initData()
+//        ACacheUtils.get().create().put(KEY_URL, "https://a.lfl224552.com/app_api.php")
+//        ACacheUtils.get().create().put(KEY_ACCOUNT, "allgo1")
+//        ACacheUtils.get().create().put(KEY_PSWD, "111111")
+
         mUrlEdt.setText(ACacheUtils.get().create().getAsString(KEY_URL))
         mAccountEdt.setText(ACacheUtils.get().create().getAsString(KEY_ACCOUNT))
         mPswdEdt.setText(ACacheUtils.get().create().getAsString(KEY_PSWD))

@@ -3,12 +3,12 @@ package com.lodz.android.notifyreaddemo.ui.splash
 import android.Manifest
 import android.content.DialogInterface
 import android.os.Build
+import android.os.Bundle
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import com.lodz.android.corekt.anko.goAppDetailSetting
-import com.lodz.android.corekt.anko.isPermissionGranted
-import com.lodz.android.corekt.anko.isTopAndBottomActivityTheSame
-import com.lodz.android.corekt.anko.toastShort
+import com.lodz.android.corekt.anko.*
 import com.lodz.android.corekt.utils.UiHandler
+import com.lodz.android.notifyreaddemo.BuildConfig
 import com.lodz.android.notifyreaddemo.R
 import com.lodz.android.notifyreaddemo.ui.login.LoginActivity
 import com.lodz.android.pandora.base.activity.AbsActivity
@@ -17,8 +17,14 @@ import permissions.dispatcher.*
 @RuntimePermissions
 class SplashActivity : AbsActivity() {
 
+    private val mTitleTv by bindView<TextView>(R.id.title_tv)
 
     override fun getAbsLayoutId(): Int = R.layout.activity_splash
+
+    override fun findViews(savedInstanceState: Bundle?) {
+        super.findViews(savedInstanceState)
+        mTitleTv.setText(BuildConfig.APP_NAME)
+    }
 
     override fun initData() {
         super.initData()
