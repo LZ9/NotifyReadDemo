@@ -12,6 +12,9 @@ object BankUtils {
         if (bean.smsType == SmsBean.BANK_CIB_TYPE) {
             return getCodeForCIB(bean)
         }
+        if (bean.smsType == SmsBean.BANK_FJNX_TYPE) {
+            return getCodeForFJNX(bean)
+        }
         return ""
     }
 
@@ -22,6 +25,9 @@ object BankUtils {
         }
         if (bean.smsType == SmsBean.BANK_CIB_TYPE) {
             return getAmountForCIB(bean)
+        }
+        if (bean.smsType == SmsBean.BANK_FJNX_TYPE) {
+            return getAmountForFJNX(bean)
         }
         return ""
     }
@@ -76,6 +82,37 @@ object BankUtils {
             var offset = 0
             for (i in start..bean.body.length) {
                 if (bean.body[i].toString().equals("元")) {
+                    offset = i
+                    break
+                }
+            }
+            val end = offset
+            return bean.body.substring(start, end)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return ""
+    }
+
+    /** 获取福建农信银行卡号 */
+    fun getCodeForFJNX(bean: SmsBean): String {
+        try {
+            val start = bean.body.indexOf("您的") + 2
+            val end = start + 4
+            return bean.body.substring(start, end)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return ""
+    }
+
+    /** 获取福建农信银行金额 */
+    fun getAmountForFJNX(bean: SmsBean): String {
+        try {
+            val start = bean.body.indexOf("收入") + 2
+            var offset = 0
+            for (i in start..bean.body.length) {
+                if (bean.body[i].toString().equals("人民币")) {
                     offset = i
                     break
                 }

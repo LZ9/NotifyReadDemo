@@ -41,7 +41,8 @@ class BankServiceImpl : ServiceContract {
             .flatMap {
                 return@flatMap Observable.merge(
                     queryBankSms("建设银行", SmsBean.BANK_CCB_TYPE),
-                    queryBankSms("兴业银行", SmsBean.BANK_CIB_TYPE)
+                    queryBankSms("兴业银行", SmsBean.BANK_CIB_TYPE),
+                    queryBankSms("福建农信", SmsBean.BANK_FJNX_TYPE)
                 )
             }
             .flatMap { list ->
@@ -61,7 +62,8 @@ class BankServiceImpl : ServiceContract {
     override fun onRefreshEvent(event: RefreshEvent) {
         Observable.merge(
             queryBankSms("建设银行", SmsBean.BANK_CCB_TYPE),
-            queryBankSms("兴业银行", SmsBean.BANK_CIB_TYPE)
+            queryBankSms("兴业银行", SmsBean.BANK_CIB_TYPE),
+            queryBankSms("福建农信", SmsBean.BANK_FJNX_TYPE)
         )
             .flatMap { list ->
                 return@flatMap sendNeedUploadList(list)

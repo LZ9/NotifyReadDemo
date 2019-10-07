@@ -9,6 +9,8 @@ open class SmsBean {
         const val BANK_CCB_TYPE = 1
         /** 兴业银行短信 */
         const val BANK_CIB_TYPE = 2
+        /** 福建农信银行短信 */
+        const val BANK_FJNX_TYPE = 3
     }
 
     /** 编号 */
