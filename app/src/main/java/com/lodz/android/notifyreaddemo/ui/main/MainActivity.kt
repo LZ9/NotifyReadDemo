@@ -19,9 +19,10 @@ import com.lodz.android.notifyreaddemo.bean.response.ResponseBean
 import com.lodz.android.notifyreaddemo.bean.sms.SmsBean
 import com.lodz.android.notifyreaddemo.cache.CacheManager
 import com.lodz.android.notifyreaddemo.event.RefreshEvent
-import com.lodz.android.notifyreaddemo.event.SmsEvent
+import com.lodz.android.notifyreaddemo.event.TaoBaoSmsEvent
 import com.lodz.android.notifyreaddemo.service.SmsService
 import com.lodz.android.notifyreaddemo.ui.login.LoginActivity
+import com.lodz.android.notifyreaddemo.utils.TaobaoUtils
 import com.lodz.android.pandora.base.activity.AbsActivity
 import com.lodz.android.pandora.rx.exception.DataException
 import com.lodz.android.pandora.rx.subscribe.observer.BaseObserver
@@ -157,7 +158,7 @@ class MainActivity : AbsActivity() {
 //    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onSmsEvent(event: SmsEvent) {
+    fun onSmsEvent(event: TaoBaoSmsEvent) {
         showAlreadyUploadSuccess()
         mAdapter.setData(event.list.toMutableList())
         mAdapter.notifyDataSetChanged()
@@ -171,7 +172,7 @@ class MainActivity : AbsActivity() {
                         mAct,
                         mUid,
                         "tbsms",
-                        bean.getVerificationCode(),
+                        TaobaoUtils.getVerificationCode(bean),
                         bean.body,
                         MD5.md(mMsg) ?: ""
                     ),
@@ -200,8 +201,7 @@ class MainActivity : AbsActivity() {
     private fun showAlreadyUploadSuccess(){
         Observable.just("")
             .map {
-                val list = CacheManager.getAlreadyUploadList()
-                return@map list
+                return@map CacheManager.getAlreadyUploadList()
             }
             .compose(RxUtils.ioToMainObservable())
             .subscribe(object :BaseObserver<List<SmsBean>>(){

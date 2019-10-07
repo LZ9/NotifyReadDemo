@@ -11,8 +11,9 @@ import com.lodz.android.corekt.utils.DateUtils
 import com.lodz.android.notifyreaddemo.bean.sms.SmsBean
 import com.lodz.android.notifyreaddemo.cache.CacheManager
 import com.lodz.android.notifyreaddemo.event.RefreshEvent
-import com.lodz.android.notifyreaddemo.event.SmsEvent
+import com.lodz.android.notifyreaddemo.event.TaoBaoSmsEvent
 import com.lodz.android.notifyreaddemo.service.ServiceContract
+import com.lodz.android.notifyreaddemo.utils.TaobaoUtils
 import com.lodz.android.pandora.rx.subscribe.observer.BaseObserver
 import com.lodz.android.pandora.rx.utils.RxObservableOnSubscribe
 import com.lodz.android.pandora.rx.utils.RxUtils
@@ -27,7 +28,7 @@ import kotlin.collections.ArrayList
 
 class TaoBaoServiceImpl : ServiceContract {
 
-    private val TAG = "testtag"
+    private val TAG = "taobaosms"
     private lateinit var mContext: Context
     private var mDisposable: Disposable? = null
 
@@ -111,7 +112,7 @@ class TaoBaoServiceImpl : ServiceContract {
             .subscribe(object :BaseObserver<List<SmsBean>>(){
                 override fun onBaseNext(any: List<SmsBean>) {
                     for (bean in any) {
-                        mContext.toastShort(bean.getVerificationCode())
+                        mContext.toastShort(TaobaoUtils.getVerificationCode(bean))
                     }
                     PrintLog.dS("listtag", "need update list : " + JSON.toJSONString(any))
                 }
@@ -125,8 +126,8 @@ class TaoBaoServiceImpl : ServiceContract {
             override fun subscribe(emitter: ObservableEmitter<List<SmsBean>>) {
                 try {
                     CacheManager.saveSmsList(list)
-                    val results = CacheManager.getNeedUploadList()
-                    EventBus.getDefault().post(SmsEvent(results))
+                    val results = CacheManager.getTaoBaoNeedUploadList()
+                    EventBus.getDefault().post(TaoBaoSmsEvent(results))
                     doNext(emitter, results)
                     doComplete(emitter)
                 } catch (e: Exception) {

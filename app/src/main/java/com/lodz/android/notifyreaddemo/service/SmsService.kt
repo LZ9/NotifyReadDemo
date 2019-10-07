@@ -30,7 +30,7 @@ class SmsService : Service() {
                 mServiceList.add(TaoBaoServiceImpl())
             }
             if (BuildConfig.APP_TYPE == App.APP_BANK_TYPE){
-                mServiceList.add(BankServiceImpl())
+                mServiceList.add(BankServiceImpl())// 建行
             }
         }
         for (contract in mServiceList) {

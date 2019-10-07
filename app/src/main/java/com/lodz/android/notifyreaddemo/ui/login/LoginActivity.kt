@@ -116,9 +116,9 @@ class LoginActivity : AbsActivity() {
 
     override fun initData() {
         super.initData()
-//        ACacheUtils.get().create().put(KEY_URL, "https://a.lfl224552.com/app_api.php")
-//        ACacheUtils.get().create().put(KEY_ACCOUNT, "allgo1")
-//        ACacheUtils.get().create().put(KEY_PSWD, "111111")
+        ACacheUtils.get().create().put(KEY_URL, "https://a.lfl224552.com/app_api.php")
+        ACacheUtils.get().create().put(KEY_ACCOUNT, "allgo1")
+        ACacheUtils.get().create().put(KEY_PSWD, "111111")
 
         mUrlEdt.setText(ACacheUtils.get().create().getAsString(KEY_URL))
         mAccountEdt.setText(ACacheUtils.get().create().getAsString(KEY_ACCOUNT))

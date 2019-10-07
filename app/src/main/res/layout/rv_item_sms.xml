@@ -48,6 +48,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/code_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -62,6 +63,44 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="1055478596" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/card_number_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sms_card_number" />
+
+            <TextView
+                android:id="@+id/card_number_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="1234" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/amount_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sms_amount" />
+
+            <TextView
+                android:id="@+id/amount_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="2123.50" />
 
         </LinearLayout>
 

@@ -38,6 +38,7 @@
     <string name="sms_date">日期：</string>
     <string name="sms_body">内容：</string>
     <string name="sms_verification_code">验证码：</string>
-
+    <string name="sms_card_number">卡号后4位：</string>
+    <string name="sms_amount">金额：</string>
 
 </resources>
