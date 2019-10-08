@@ -13,12 +13,14 @@ import com.lodz.android.notifyreaddemo.cache.CacheManager
 import com.lodz.android.notifyreaddemo.event.BankSmsEvent
 import com.lodz.android.notifyreaddemo.event.RefreshEvent
 import com.lodz.android.notifyreaddemo.service.ServiceContract
+import com.lodz.android.notifyreaddemo.utils.BankUtils
 import com.lodz.android.pandora.rx.subscribe.observer.BaseObserver
 import com.lodz.android.pandora.rx.utils.RxObservableOnSubscribe
 import com.lodz.android.pandora.rx.utils.RxUtils
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
 import io.reactivex.disposables.Disposable
+import io.reactivex.functions.BiFunction
 import io.reactivex.functions.Consumer
 import org.greenrobot.eventbus.EventBus
 import java.util.*
@@ -38,20 +40,39 @@ class BankServiceImpl : ServiceContract {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int) {
         release()
         mDisposable = Observable.interval(0, 10, TimeUnit.SECONDS)
-            .flatMap {
-                return@flatMap Observable.merge(
-                    queryBankSms("建设银行", SmsBean.BANK_CCB_TYPE),
-                    queryBankSms("兴业银行", SmsBean.BANK_CIB_TYPE),
-                    queryBankSms("福建农信", SmsBean.BANK_FJNX_TYPE)
-                )
-            }
-            .flatMap { list ->
-                return@flatMap sendNeedUploadList(list)
-            }
             .compose(RxUtils.ioToMainObservable())
-            .subscribe(Consumer { list ->
-                PrintLog.dS(TAG, JSON.toJSONString(list))
-                EventBus.getDefault().post(BankSmsEvent(list))
+            .subscribe(Consumer { i ->
+                queryBankSms("建设银行", SmsBean.BANK_CCB_TYPE)
+                    .zipWith(queryBankSms("兴业银行", SmsBean.BANK_CIB_TYPE), BiFunction<List<SmsBean>, List<SmsBean>, List<SmsBean>>{prev,curr->
+                        val list = ArrayList<SmsBean>()
+                        list.addAll(prev)
+                        list.addAll(curr)
+                        return@BiFunction list
+                    })
+                    .zipWith(queryBankSms("福建农信", SmsBean.BANK_FJNX_TYPE), BiFunction<List<SmsBean>, List<SmsBean>, List<SmsBean>>{prev,curr->
+                        val list = ArrayList<SmsBean>()
+                        list.addAll(prev)
+                        list.addAll(curr)
+                        return@BiFunction list
+                    })
+                    .flatMap { list->
+                        for (bean in list) {
+                            PrintLog.eS(TAG, "卡号 ： " + BankUtils.getCode(bean) + " , 金额 : " + BankUtils.getAmount(bean))
+                        }
+                        return@flatMap sendNeedUploadList(list)
+                    }
+                    .compose(RxUtils.ioToMainObservable())
+                    .subscribe(object : BaseObserver<List<SmsBean>>() {
+                        override fun onBaseNext(any: List<SmsBean>) {
+                            PrintLog.dS(TAG, JSON.toJSONString(any))
+                            EventBus.getDefault().post(BankSmsEvent(any))
+                            for (bean in any) {
+                                mContext.toastShort(bean.body)
+                            }
+                        }
+                        override fun onBaseError(e: Throwable) {
+                        }
+                    })
             })
     }
 
@@ -60,24 +81,34 @@ class BankServiceImpl : ServiceContract {
     }
 
     override fun onRefreshEvent(event: RefreshEvent) {
-        Observable.merge(
-            queryBankSms("建设银行", SmsBean.BANK_CCB_TYPE),
-            queryBankSms("兴业银行", SmsBean.BANK_CIB_TYPE),
-            queryBankSms("福建农信", SmsBean.BANK_FJNX_TYPE)
-        )
-            .flatMap { list ->
+        queryBankSms("建设银行", SmsBean.BANK_CCB_TYPE)
+            .zipWith(queryBankSms("兴业银行", SmsBean.BANK_CIB_TYPE), BiFunction<List<SmsBean>, List<SmsBean>, List<SmsBean>>{prev,curr->
+                val list = ArrayList<SmsBean>()
+                list.addAll(prev)
+                list.addAll(curr)
+                return@BiFunction list
+            })
+            .zipWith(queryBankSms("福建农信", SmsBean.BANK_FJNX_TYPE), BiFunction<List<SmsBean>, List<SmsBean>, List<SmsBean>>{prev,curr->
+                val list = ArrayList<SmsBean>()
+                list.addAll(prev)
+                list.addAll(curr)
+                return@BiFunction list
+            })
+            .flatMap { list->
+                for (bean in list) {
+                    PrintLog.eS(TAG, "卡号 ： " + BankUtils.getCode(bean) + " , 金额 : " + BankUtils.getAmount(bean))
+                }
                 return@flatMap sendNeedUploadList(list)
             }
             .compose(RxUtils.ioToMainObservable())
             .subscribe(object : BaseObserver<List<SmsBean>>() {
                 override fun onBaseNext(any: List<SmsBean>) {
-                    EventBus.getDefault().post(BankSmsEvent(any))
                     PrintLog.dS(TAG, JSON.toJSONString(any))
+                    EventBus.getDefault().post(BankSmsEvent(any))
                     for (bean in any) {
                         mContext.toastShort(bean.body)
                     }
                 }
-
                 override fun onBaseError(e: Throwable) {
                 }
             })

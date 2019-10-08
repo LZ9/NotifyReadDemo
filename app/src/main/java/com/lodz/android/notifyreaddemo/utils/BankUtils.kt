@@ -112,7 +112,7 @@ object BankUtils {
             val start = bean.body.indexOf("收入") + 2
             var offset = 0
             for (i in start..bean.body.length) {
-                if (bean.body[i].toString().equals("人民币")) {
+                if (bean.body[i].toString().equals("人")) {
                     offset = i
                     break
                 }

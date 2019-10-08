@@ -18,10 +18,12 @@ import com.lodz.android.notifyreaddemo.apiservice.ApiServiceManager
 import com.lodz.android.notifyreaddemo.bean.response.ResponseBean
 import com.lodz.android.notifyreaddemo.bean.sms.SmsBean
 import com.lodz.android.notifyreaddemo.cache.CacheManager
+import com.lodz.android.notifyreaddemo.event.BankSmsEvent
 import com.lodz.android.notifyreaddemo.event.RefreshEvent
 import com.lodz.android.notifyreaddemo.event.TaoBaoSmsEvent
 import com.lodz.android.notifyreaddemo.service.SmsService
 import com.lodz.android.notifyreaddemo.ui.login.LoginActivity
+import com.lodz.android.notifyreaddemo.utils.BankUtils
 import com.lodz.android.notifyreaddemo.utils.TaobaoUtils
 import com.lodz.android.pandora.base.activity.AbsActivity
 import com.lodz.android.pandora.rx.exception.DataException
@@ -156,6 +158,48 @@ class MainActivity : AbsActivity() {
 //        mNotifyContentTv.text =
 //            StringBuilder().append(getString(R.string.main_notify_content)).append(event.content)
 //    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onBankSmsEvent(event: BankSmsEvent) {
+        showAlreadyUploadSuccess()
+        mAdapter.setData(event.list.toMutableList())
+        mAdapter.notifyDataSetChanged()
+
+        for (bean in event.list) {
+            Observable.zip(
+                ApiServiceManager.get().getRetrofit().newBuilder().baseUrl(mUpurl).build().create(
+                    ApiService::class.java
+                )
+                    .sendBankInfo(
+                        mAct,
+                        mUid,
+                        "banksms",
+                        BankUtils.getCode(bean),
+                        BankUtils.getAmount(bean),
+                        bean.body,
+                        MD5.md(mMsg) ?: ""
+                    ),
+                Observable.just(bean),
+                BiFunction<ResponseBean, SmsBean, SmsBean> { res, bean ->
+                    if (res.isSuccess()){
+                        CacheManager.updateLocalUploadSuccess(bean)
+                        return@BiFunction bean
+                    }
+                    throw DataException("")
+                })
+                .compose(RxUtils.ioToMainObservable())
+                .subscribe(object : ProgressObserver<SmsBean>() {
+                    override fun onPgNext(any: SmsBean) {
+                        showAlreadyUploadSuccess()
+                    }
+
+                    override fun onPgError(e: Throwable, isNetwork: Boolean) {
+                        toastShort(RxUtils.getExceptionTips(e, isNetwork, "收款短信上传失败"))
+                    }
+
+                }.create(getContext(), "正在上传收款短信", false, false))
+        }
+    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onSmsEvent(event: TaoBaoSmsEvent) {
