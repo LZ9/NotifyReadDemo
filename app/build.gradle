@@ -69,8 +69,8 @@ android {
         BankSms {
             dimension = 'Channel'
             applicationId = 'com.lodz.android.banksms'
-            versionCode = 1
-            versionName = '1.0'
+            versionCode = 2
+            versionName = '1.1'
             buildConfigField "String", APP_NAME, "\"银行短信解析\""
             buildConfigField "int", APP_TYPE, "2"
             manifestPlaceholders = [
