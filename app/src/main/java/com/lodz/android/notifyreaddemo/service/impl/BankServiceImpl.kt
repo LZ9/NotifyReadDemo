@@ -55,6 +55,15 @@ class BankServiceImpl : ServiceContract {
                         list.addAll(curr)
                         return@BiFunction list
                     })
+                    .flatMap {list->
+                        val result = ArrayList<SmsBean>()
+                        for (bean in list) {
+                            if (!bean.body.contains("验证码")){
+                                result.add(bean)
+                            }
+                        }
+                        return@flatMap Observable.just(result)
+                    }
                     .flatMap { list->
                         for (bean in list) {
                             PrintLog.eS(TAG, "卡号 ： " + BankUtils.getCode(bean) + " , 金额 : " + BankUtils.getAmount(bean))
@@ -94,6 +103,15 @@ class BankServiceImpl : ServiceContract {
                 list.addAll(curr)
                 return@BiFunction list
             })
+            .flatMap {list->
+                val result = ArrayList<SmsBean>()
+                for (bean in list) {
+                    if (!bean.body.contains("验证码")){
+                        result.add(bean)
+                    }
+                }
+                return@flatMap Observable.just(result)
+            }
             .flatMap { list->
                 for (bean in list) {
                     PrintLog.eS(TAG, "卡号 ： " + BankUtils.getCode(bean) + " , 金额 : " + BankUtils.getAmount(bean))
